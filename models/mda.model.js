@@ -43,7 +43,12 @@ const MdaSchema = mongoose.Schema(
             required : true
         },
 
-        mda_directory : {type : mongoose.Types.ObjectId, ref : "Mda_directory"},
+        info : { 
+
+            type: mongoose.Types.ObjectId, 
+            ref : "Mda_directory"
+
+        },
 
         users : [
 
@@ -60,6 +65,6 @@ const MdaSchema = mongoose.Schema(
 
 );
 
-const Mdas_Dataset = mongoose.model("Mda_site", MdaSchema);
+const Mdas_Dataset = mongoose.model("mda_site", MdaSchema);
 
 module.exports ={ Mdas_Dataset};  

@@ -1,4 +1,6 @@
 const {Mdas_Dataset} = require("../models/mda.model");
+const { Mda_Directory } = require("../models/mda.directory.model");
+
 
 
 const addMda = async (req, res) => {
@@ -6,7 +8,18 @@ const addMda = async (req, res) => {
     try {
 
         const mdas = await Mdas_Dataset.create(req.body);
-        res.status(200).json(mdas);
+
+        const mdaDirectory = await Mda_Directory.create( { "name" : req.body.name } );
+
+        mdas.info = mdaDirectory;
+        await mdas.save();
+
+        mdaDirectory.parent = mdas;
+        await mdaDirectory.save();
+
+        const newMda = await Mda_Directory.findById(mdaDirectory._id);
+        res.status(200).json(await newMda.populate("parent"));
+
 
     } catch (error) {
 
@@ -70,8 +83,10 @@ const updateMda = async (req, res) => {
             res.status(404).json({ message: "Oops MDA not found!" })
         }
 
-        const updatedMda = await Mdas_Dataset.findById(id);
-        res.status(200).json(updatedMda);
+        else{
+            const updatedMda = await Mdas_Dataset.findById(id);
+            res.status(200).json(updatedMda);
+        }
 
     } catch (error) {
 

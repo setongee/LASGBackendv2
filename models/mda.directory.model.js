@@ -30,7 +30,7 @@ const MdaDirectorySchema = mongoose.Schema(
 
         },
 
-        mda : { type : mongoose.Types.ObjectId, ref : "Mda_sites" }
+        parent : { type : mongoose.Types.ObjectId, ref : "mda_site" }
 
     },
 
@@ -40,6 +40,6 @@ const MdaDirectorySchema = mongoose.Schema(
 
 );
 
-const Mda_Directory = mongoose.model("Mda_directory", MdaDirectorySchema);
+const Mda_Directory = mongoose.model("mda_directory", MdaDirectorySchema);
 
 module.exports = { Mda_Directory};  
