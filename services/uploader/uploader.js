@@ -12,7 +12,7 @@ const UploaderMiddleware = async (data) => {
     
     // Upload an image
     const uploadResult = await cloudinary.v2.uploader.upload( data.data , {
-        public_id: data.temp
+        public_id: data.temp, overwrite: true
     }).catch((error)=>{console.log(error)});
     
     
@@ -31,7 +31,7 @@ const UploaderMiddleware = async (data) => {
     });
 
 
-    return optimizeUrl;
+    return uploadResult;
 
 };
 

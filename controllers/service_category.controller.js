@@ -1,4 +1,4 @@
-const UploaderMiddleware = require("../middleware/uploader");
+const UploaderMiddleware = require("../services/uploader/uploader");
 const Category = require("../models/service_category.model");
 
 const addCategory = async (req, res) => {
@@ -13,7 +13,7 @@ const addCategory = async (req, res) => {
             
             await UploaderMiddleware(icon).then( async response => {
 
-                category.icon = response
+                category.icon = response.secure_url
                 await category.save();
     
             })
@@ -77,11 +77,11 @@ const updateCategory = async (req, res) => {
         category.formattedName = name.replaceAll(' ', '').replaceAll(',', '_').replaceAll('&', '_').toLowerCase();
         await category.save();
 
-        if (req.body.icon) {
+        if (req.body.icon.data !== undefined) {
             
             await UploaderMiddleware(req.body.icon).then( async response => {
 
-                category.icon = response
+                category.icon = response.secure_url
                 await category.save();
     
             })

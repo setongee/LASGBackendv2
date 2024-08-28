@@ -13,7 +13,7 @@ const CategorySchema = mongoose.Schema({
 
     },
 
-    description : {
+    short : {
 
         type : String,
         required : true
@@ -21,22 +21,17 @@ const CategorySchema = mongoose.Schema({
     },
 
     icon : {
-        type : Object
+        type : Object,
+        required : true
     },
 
-    disabled : {
+    isOffline : {
 
         type : Boolean,
         default : false,
         required : true
 
-    },
-
-    services : [{
-        type : mongoose.Types.ObjectId,
-        ref : "service"
-    }]
-
+    }
 },
 
 {

@@ -11,8 +11,12 @@ app.use(express.urlencoded({extended : false, limit: '50mb'}));
 
 const MdaRoutes = require("./routes/Mda.routes.js");
 const MdaDirectoryRoutes = require("./routes/MdaDirectory.routes.js");
-const UploaderMiddleware = require("./middleware/uploader.js");
-const CategoryRoutes = require("./routes/service_category.routes.js")
+const CategoryRoutes = require("./routes/service_category.routes.js");
+const serviceRoutes = require("./routes/services.route.js")
+const NewsRoutes = require("./routes/news.routes.js");
+const ExecutivesRoutes = require("./routes/executives.routes.js");
+const Subscibers = require("./routes/subscribers.js");
+const userRoutes = require("./routes/user.routes.js");
 
 const base_url = '/api/v2'
 
@@ -20,14 +24,12 @@ const base_url = '/api/v2'
 app.use(`${base_url}/mdas`, MdaRoutes );
 app.use(`${base_url}/directory`, MdaDirectoryRoutes );
 app.use(`${base_url}/category`, CategoryRoutes );
+app.use(`${base_url}/services`, serviceRoutes);
+app.use(`${base_url}/news`, NewsRoutes);
+app.use(`${base_url}/executives`, ExecutivesRoutes);
+app.use(`${base_url}/subscribers`, Subscibers);
+app.use(`${base_url}/user`,  userRoutes);
 
-
-//Uploader Middleware
-app.post(`${base_url}/upload`, async (req, res) => {
-
-    await UploaderMiddleware(req.body).then((msg) => res.send(msg));
-
-})
 
 
 
