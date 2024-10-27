@@ -17,6 +17,11 @@ const servicesSchema = mongoose.Schema({
         required : true
     },
 
+    keywords : {
+        type : Array,
+        required : true
+    },
+
     url : {
         type : String,
         required : true
