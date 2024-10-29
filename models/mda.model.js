@@ -22,6 +22,16 @@ const MdaSchema = mongoose.Schema(
             type : String
         },
 
+        phone : {
+            type : String,
+            required : true
+        },
+
+        address : {
+            type : String,
+            required : true
+        },
+
         subdomain : {
             type : String,
             required : true
