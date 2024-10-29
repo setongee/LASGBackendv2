@@ -7,6 +7,10 @@ const newsSchema = mongoose.Schema({
         required : true
     },
 
+    mda : {
+        type : String
+    },
+
     date : {
         type : Object,
         required : true
