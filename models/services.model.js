@@ -32,6 +32,11 @@ const servicesSchema = mongoose.Schema({
         required : true
     },
 
+    formattedName : {
+        type : Array,
+        required : true
+    },
+
     content : {
         type : String,
         required : true

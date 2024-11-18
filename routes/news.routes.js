@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/add', addNews);
 
-router.get('/get/all', getAllNews);
+router.get('/get/all/:topic/:page', getAllNews);
 router.get('/view/:id', getSingleNews);
 router.get('/get/all/:mda', getNewsForMda)
 

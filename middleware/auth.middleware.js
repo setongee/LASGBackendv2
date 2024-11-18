@@ -3,34 +3,30 @@ const { secret_key } = require("../configs/jwt.config");
 
 const authenticateToken = (req, res, next) => {
 
-    const authHeader = req.header("Authorization");
+    const authHeader = req.header.Authorization || req.header.Authorization;
 
-    if (!authHeader) {
+    if (authHeader && authHeader.startsWith("Bearer")) {
 
-        return res.status(401).json( { message : "Unathorized : Missing Token!" } );
+        const [bearer, token] = authHeader.split(" ");
 
-    }
+        if (!token) {
 
-    const [bearer, token] = authHeader.split(" ");
-
-    if (bearer !== 'Bearer' || !token ) {
-
-        return res.status(401).json( { message : "Invalid token format!" } );
-
-    }
-
-    jwt.verify( token, secret_key, (err, user) => {
-
-        if (err) {
-
-            return res.status(403).json( {message : "Forbidden : Invalid Token!"} )
-
+            return res.status(401).json( { message : "Unathorized : Missing Token!" } );
+            
         }
 
-        req.user = user;
-        next();
+        try {
 
-    } )
+            const decode = jwt.verify(token, secret_key);
+            req.user = decode;
+            console.log(`the requested user is ${req.user}`);
+            next();
+
+        } catch (error) {
+            res.status(400).json({ message : `Token isn't valid!` })
+        }
+
+    }
 
 }
 

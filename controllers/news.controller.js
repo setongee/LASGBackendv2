@@ -1,3 +1,4 @@
+const { parse } = require("dotenv");
 const news = require("../models/news.model");
 const UploaderMiddleware = require("../services/uploader/uploader");
 
@@ -31,12 +32,44 @@ const addNews = async (req, res) => {
 
 const getAllNews = async (req, res) => {
 
+    const page = parseInt(req.params.page || 0);
+    const limit = 20;
+    const topic = (req.params.topic || "all")
+    
+    try {
+
+        if (topic !== "all") {
+
+            let count = await news.find( { categories : topic } ).count()
+            const newsRef = await news.find( { categories : topic } ).limit(limit).skip(page * limit);
+            res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef, length : count })
+
+
+        } else {
+            let count = await news.estimatedDocumentCount();
+            const newsRef = await news.find({}).limit(limit).skip(page * limit);
+            res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef, length : count })
+        }
+        
+    }
+     
+    catch (error) {
+
+        res.status(500).json({message : error.message});
+        
+    }
+}
+
+const getAllNewsCount = async (req, res) => {
+
     try {
 
         const newsRef = await news.find({});
-        res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef })
+        res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef.length })
+
         
-    } 
+    }
+     
     catch (error) {
 
         res.status(500).json({message : error.message});

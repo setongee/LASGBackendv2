@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 ////////// User Database ////////////
 
-const userSchema = mongoose.Schema({
+const adminUser = mongoose.Schema({
 
     firstname : {
         type : String,
@@ -17,7 +17,8 @@ const userSchema = mongoose.Schema({
 
     email : {
         type : String,
-        required : true
+        required : true,
+        unique : true
     },
 
     password : {
@@ -28,8 +29,8 @@ const userSchema = mongoose.Schema({
     role : {
         type : String,
         required : true,
-        default : "admin"
-    }
+        enum : ["admin", "comms", "ict"]
+    },
 
 },
 
@@ -39,6 +40,6 @@ const userSchema = mongoose.Schema({
 
 );
 
-const User = mongoose.model("users", userSchema);
+const User = mongoose.model("adminUser", adminUser);
 
 module.exports = User;

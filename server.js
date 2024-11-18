@@ -6,7 +6,7 @@ const cors = require('cors');
 const port = 8000
 
 app.use(cors());
-app.use(express.json({limit: '50mb'}));
+app.use(express.json());
 app.use(express.urlencoded({extended : false, limit: '50mb'}));
 
 const MdaRoutes = require("./routes/Mda.routes.js");
@@ -17,6 +17,7 @@ const NewsRoutes = require("./routes/news.routes.js");
 const ExecutivesRoutes = require("./routes/executives.routes.js");
 const Subscibers = require("./routes/subscribers.js");
 const userRoutes = require("./routes/user.routes.js");
+const adminRoutes = require("./routes/authAdmin.routes");
 
 const base_url = '/api/v2'
 
@@ -28,7 +29,8 @@ app.use(`${base_url}/services`, serviceRoutes);
 app.use(`${base_url}/news`, NewsRoutes);
 app.use(`${base_url}/executives`, ExecutivesRoutes);
 app.use(`${base_url}/subscribers`, Subscibers);
-app.use(`${base_url}/user`,  userRoutes);
+app.use(`${base_url}/user`, userRoutes);
+app.use(`${base_url}/admin`, adminRoutes);
 
 
 

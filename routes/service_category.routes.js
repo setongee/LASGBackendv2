@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllCategories, addCategory, updateCategory, deleteCategory, getSingleCategory } = require("../controllers/service_category.controller");
+const { getAllCategories, addCategory, updateCategory, deleteCategory, getSingleCategory, getSingleCategoryByName } = require("../controllers/service_category.controller");
 
 const router = express.Router();
 
@@ -8,6 +8,9 @@ router.post('/add', addCategory)
 
 //get all categories
 router.get('/all', getAllCategories)
+
+//get single category
+router.get('/name/:name', getSingleCategoryByName)
 
 //get single category
 router.get('/:id', getSingleCategory)

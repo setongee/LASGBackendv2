@@ -65,6 +65,24 @@ const getServicesByCategory = async (req, res) => {
 
 }
 
+const getServicesByTag = async (req, res) => {
+
+    const {category} = req.params;
+
+    const getService = await services.find({formattedName : category});
+
+    if (getService) {
+
+        res.status(200).json({status : "ok", message : "Fetched data successfully...", data : getService })
+
+    } else {
+
+        res.status(404).json({status : "error", message : "Failed to fetch data" })
+
+    }
+
+}
+
 const getAllServices = async (req, res) => {
     
     const serviceRef = await services.find({});
@@ -116,4 +134,4 @@ const deleteService = async (req, res) => {
 }
 
 
-module.exports = { addService, getAllServices, getSingleService, updateService, deleteService, getServicesByCategory }
+module.exports = { addService, getAllServices, getSingleService, updateService, deleteService, getServicesByCategory, getServicesByTag }

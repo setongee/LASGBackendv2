@@ -65,6 +65,23 @@ const getSingleCategory = async (req, res) => {
     }
 }
 
+const getSingleCategoryByName = async (req, res) => {
+
+    try {
+
+        const { name } = req.params;
+
+        const category = await Category.find({formattedName : name});
+        res.status(200).json({ status : "ok", message : "Fetched single data successfully...", data : category })
+        
+    } 
+    catch (error) {
+
+        res.status(500).json({message : error.message})
+        
+    }
+}
+
 const updateCategory = async (req, res) => {
 
     try {
@@ -137,6 +154,7 @@ module.exports = {
     getAllCategories,
     getSingleCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getSingleCategoryByName,
 
 }
