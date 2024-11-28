@@ -1,4 +1,6 @@
 const express = require("express");
+const { authenticateToken } = require("../middleware/auth.middleware");
+
 const router = express.Router();
 const {addMda, getAllMdas, updateMda, getSingleMda, deleteMda} = require("../controllers/Mda.controller");
 

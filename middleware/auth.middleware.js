@@ -3,7 +3,7 @@ const { secret_key } = require("../configs/jwt.config");
 
 const authenticateToken = (req, res, next) => {
 
-    const authHeader = req.header.Authorization || req.header.Authorization;
+    const authHeader = req.headers.Authorization || req.headers.authorization;
 
     if (authHeader && authHeader.startsWith("Bearer")) {
 

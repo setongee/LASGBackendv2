@@ -1,5 +1,6 @@
 const UploaderMiddleware = require("../services/uploader/uploader");
 const Category = require("../models/service_category.model");
+const ServicesData = require("../models/services.model");
 
 const addCategory = async (req, res) => {
 
@@ -87,8 +88,18 @@ const updateCategory = async (req, res) => {
     try {
 
         const { id } = req.params;
-        const {name} = req.body
+        const {name, formattedName, keywords} = req.body
 
+        // const serve = await ServicesData.updateMany( {}, { $set : { keywordsGroup : {} } } );
+
+        // console.log(serve)
+
+        // await ServicesData.updateMany( {formattedName : formattedName}, { $set : { keywordsGroup : { [`${formattedName}`] : keywords } } } );
+
+        await ServicesData.updateMany( {formattedName : formattedName}, { $set : { [`keywordsGroup.${formattedName}`] : keywords } } );
+
+        // [{ $addFields: { some_key: new_info } }]
+        
         const category = await Category.findByIdAndUpdate(id, req.body);
 
         category.formattedName = name.replaceAll(' ', '').replaceAll(',', '_').replaceAll('&', '_').toLowerCase();

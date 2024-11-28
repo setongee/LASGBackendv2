@@ -17,6 +17,20 @@ const servicesSchema = mongoose.Schema({
         required : true
     },
 
+    keywordsTrim : {
+        type : Array,
+        required : true
+    },
+
+    keywordsGroup : {
+        type : Object,
+        required : true
+    },
+
+    customKeywords : {
+        type : Array
+    },
+
     keywords : {
         type : Array,
         required : true

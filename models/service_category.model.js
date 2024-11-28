@@ -13,6 +13,11 @@ const CategorySchema = mongoose.Schema({
 
     },
 
+    keywords : {
+        type : Array,
+        required : true
+    },
+
     short : {
 
         type : String,
