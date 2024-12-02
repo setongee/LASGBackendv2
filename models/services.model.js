@@ -17,6 +17,10 @@ const servicesSchema = mongoose.Schema({
         required : true
     },
 
+    pin : {
+        type : String
+    },
+
     keywordsTrim : {
         type : Array,
         required : true

@@ -85,7 +85,7 @@ const getServicesByTag = async (req, res) => {
 
 const getAllServices = async (req, res) => {
     
-    const serviceRef = await services.find({}).sort({'updatedAt': -1});
+    const serviceRef = await services.find({}).sort({'createdAt': -1});
 
     if (serviceRef) {
 

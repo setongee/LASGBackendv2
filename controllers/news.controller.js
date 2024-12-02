@@ -40,17 +40,17 @@ const getAllNews = async (req, res) => {
 
         if (topic !== "all") {
 
-            // let count = await news.find( { categories : topic } ).count()
+            let count = await news.find( { categories : topic } ).count()
             
             const newsRef = await news.find( { categories : topic } ).limit(limit).skip(page * limit);
 
-            res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef, length : 0 })
+            res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef, length : count })
 
 
         } else {
 
             let count = await news.estimatedDocumentCount();
-            const newsRef = await news.find({}).sort({'updatedAt': -1}).limit(limit).skip(page * limit);
+            const newsRef = await news.find({}).sort({'date': -1}).limit(limit).skip(page * limit);
 
             res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef, length : count })
         }
