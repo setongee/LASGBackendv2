@@ -12,7 +12,7 @@ app.use(express.urlencoded({extended : false, limit: '50mb'}));
 const MdaRoutes = require("./routes/Mda.routes.js");
 const MdaDirectoryRoutes = require("./routes/MdaDirectory.routes.js");
 const CategoryRoutes = require("./routes/service_category.routes.js");
-const serviceRoutes = require("./routes/services.route.js")
+const serviceRoutes = require("./routes/services.routes.js")
 const NewsRoutes = require("./routes/news.routes.js");
 const ExecutivesRoutes = require("./routes/executives.routes.js");
 const Subscibers = require("./routes/subscribers.js");

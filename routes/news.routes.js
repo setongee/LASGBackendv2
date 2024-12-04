@@ -1,6 +1,8 @@
 const express = require("express");
 
 const { addNews, getAllNews, getSingleNews, getNewsForMda, updateNews, deleteNews } = require("../controllers/news.controller");
+const authorizeRoles = require("../middleware/authorizeRoles");
+const { authenticateToken } = require("../middleware/auth.middleware");
 const router = express.Router();
 
 router.post('/add', addNews);

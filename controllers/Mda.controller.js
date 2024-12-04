@@ -33,8 +33,9 @@ const getAllMdas = async (req, res) => {
 
     try {
 
+        let count = await Mdas_Dataset.estimatedDocumentCount();
         const getMdas = await Mdas_Dataset.find({});
-        res.status(200).json(getMdas);
+        res.status(200).json({data : getMdas, count : count});
 
     } catch (error) {
 

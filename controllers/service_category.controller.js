@@ -90,15 +90,14 @@ const updateCategory = async (req, res) => {
         const { id } = req.params;
         const {name, formattedName, keywords} = req.body
 
-        // const serve = await ServicesData.updateMany( {}, { $set : { keywordsGroup : {} } } );
-
-        // console.log(serve)
-
+        // const serve = await ServicesData.updateMany( {}, { $set : { keywords : {}, keywordsTrim : {}, keywordsGroup : {} } } );
+        // const rex = await ServicesData.find({});
+        // const rex = await ServicesData.updateMany( {formattedName : "advertisement"}, { $set : { content : "<p>Hey i am here wassup</p>" } } );
+        // [{ $addFields: { some_key: new_info } }]
+        // console.log(rex)
         // await ServicesData.updateMany( {formattedName : formattedName}, { $set : { keywordsGroup : { [`${formattedName}`] : keywords } } } );
 
         await ServicesData.updateMany( {formattedName : formattedName}, { $set : { [`keywordsGroup.${formattedName}`] : keywords } } );
-
-        // [{ $addFields: { some_key: new_info } }]
         
         const category = await Category.findByIdAndUpdate(id, req.body);
 

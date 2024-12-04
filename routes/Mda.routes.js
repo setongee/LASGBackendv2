@@ -3,6 +3,7 @@ const { authenticateToken } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 const {addMda, getAllMdas, updateMda, getSingleMda, deleteMda} = require("../controllers/Mda.controller");
+const authorizeRoles = require("../middleware/authorizeRoles");
 
 //Add Mdas Router
 router.post("/add", addMda);

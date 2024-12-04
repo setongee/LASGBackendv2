@@ -85,11 +85,12 @@ const getServicesByTag = async (req, res) => {
 
 const getAllServices = async (req, res) => {
     
-    const serviceRef = await services.find({}).sort({'createdAt': -1});
+    const serviceRef = await services.find({}).sort({"updatedAt" : -1});
+    let count = await services.estimatedDocumentCount();
 
     if (serviceRef) {
 
-        res.status(200).json({status : "ok", message : "Fetched all services successfully...", data : serviceRef })
+        res.status(200).json({status : "ok", message : "Fetched all services successfully...", data : serviceRef, count : count })
 
     } else {
 
