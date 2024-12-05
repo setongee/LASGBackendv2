@@ -5,8 +5,6 @@ const authenticateToken = (req, res, next) => {
 
     const authHeader = req.headers.Authorization || req.headers.authorization;
 
-    
-
     if (authHeader && authHeader.startsWith("Bearer")) {
 
         const [bearer, token] = authHeader.split(" ");
@@ -21,15 +19,13 @@ const authenticateToken = (req, res, next) => {
 
             const decode = jwt.verify(token, secret_key);
             req.user = decode;
-            
+            console.log(`the requested user is ${req.user}`);
             next();
 
         } catch (error) {
-            return res.status(400).json({ status : "bad", message : `Token isn't valid!` })
+            res.status(400).json({ message : `Token isn't valid!` })
         }
 
-    } else {
-        return res.status(401).json( { status : "bad", message : "Unathorized : Missing Token!" } );
     }
 
 }

@@ -21,6 +21,10 @@ const adminUser = mongoose.Schema({
         unique : true
     },
 
+    lastLogin : {
+        type : String
+    },
+
     password : {
         type : String,
         required : true
