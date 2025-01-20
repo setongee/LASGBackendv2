@@ -7,30 +7,28 @@ const MdaDirectorySchema = mongoose.Schema(
             type : String
         },
 
-        about : {
-
-            mission : {type : String, default : ""},
-            vision : {type : String, default : ""},
-            past_commissioners : [],
-            other : {type : String, default : ""},
+        agencies : {
+            type : Array
         },
+
+        mission : {type : String, default : ""},
+        
+        vision : {type : String, default : ""},
 
         responsibilities : { type : String },
 
-        principal_officers : [],
-
-        news : [ { type : mongoose.Types.ObjectId, ref : "News" } ],      
+        people : {
+            type : Array
+        },
 
         contact : {
 
             email : {type : String, default : ""},
             phone : {type : String, default : ""},
             address : {type : String, default : ""},
-            socials : []
+            socials : {}
 
-        },
-
-        parent : { type : mongoose.Types.ObjectId, ref : "mda_site" }
+        }
 
     },
 

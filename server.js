@@ -18,6 +18,10 @@ const ExecutivesRoutes = require("./routes/executives.routes.js");
 const Subscibers = require("./routes/subscribers.js");
 const userRoutes = require("./routes/user.routes.js");
 const adminRoutes = require("./routes/authAdmin.routes");
+const eventRoutes = require("./routes/events.routes.js");
+
+// MDA Admin Routes
+const mist = require("./routes/admin/mist.routes.js");
 
 const base_url = '/api/v2'
 
@@ -31,6 +35,8 @@ app.use(`${base_url}/executives`, ExecutivesRoutes);
 app.use(`${base_url}/subscribers`, Subscibers);
 app.use(`${base_url}/user`, userRoutes);
 app.use(`${base_url}/admin`, adminRoutes);
+app.use(`${base_url}/events`, eventRoutes);
+app.use(`${base_url}/mist`, mist);
 
 
 

@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const {getAllMdaDirectory, getSingleMdaDirectory, updateMdaDirectory } = require("../controllers/MdaDirectory.controller");
+const {getAllMdaDirectory, getSingleMdaDirectory, updateMdaDirectory, addDir, uploadFile } = require("../controllers/MdaDirectory.controller");
+
+//addd dir
+router.post("/create", addDir);
+
+//Upload photo
+router.post("/upload", uploadFile);
 
 //get All Mdas
 router.get("/all", getAllMdaDirectory);

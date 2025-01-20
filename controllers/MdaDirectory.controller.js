@@ -1,4 +1,38 @@
 const { Mda_Directory } = require("../models/mda.directory.model");
+const UploaderMiddleware = require("../services/uploader/uploader");
+
+const data = {
+
+    name : "mist",
+    mission : "",
+    vision : "",
+    responsibilities : "",
+    agencies : [],
+    people : [],
+    contact : {
+        email : "",
+        phone : "",
+        address : "",
+        social : []
+    }
+}
+
+const addDir = async (req, res) => {
+
+    // console.log(req.body)
+
+    try {
+
+        // const dir = await Mda_Directory.create(data);
+        // res.status(200).json({status : "ok", message : "Directory Created Successfully", data : dir});
+        
+    } catch (error) {
+
+        console.log(error)
+        
+    }
+
+}
 
 
 const getAllMdaDirectory = async (req, res) => {
@@ -22,7 +56,7 @@ const getSingleMdaDirectory = async (req, res) => {
 
         const { id } = req.params;
 
-        const getSingleMdaDirectory = await Mda_Directory.findById(id);
+        const getSingleMdaDirectory = await Mda_Directory.find( { name : id } );
 
         if (!getSingleMdaDirectory) {
 
@@ -58,7 +92,7 @@ const updateMdaDirectory = async (req, res) => {
         else {
 
             const updatedMdaDirectory = await Mda_Directory.findById(id);
-            res.status(200).json(updatedMdaDirectory);
+            res.status(200).json({status : "ok", message : "Your Information has been updated successfully!"});
 
         }
 
@@ -70,10 +104,37 @@ const updateMdaDirectory = async (req, res) => {
 
 }
 
+const uploadFile = async (req, res) => {
+
+    try {
+
+        const { photo } = req.body
+        
+        if (Object.keys(photo).length) {
+            
+            await UploaderMiddleware(photo).then( async response => {
+
+                res.status(200).json( { status : "ok", url : response.secure_url } );
+    
+            })
+        }
+        
+    }
+
+    catch (error) {
+
+        res.status(500).json({message : error.message})
+        
+    }
+
+}
+
 module.exports = {
 
    getAllMdaDirectory,
    updateMdaDirectory,
-   getSingleMdaDirectory
+   getSingleMdaDirectory,
+   addDir,
+   uploadFile
 
 }

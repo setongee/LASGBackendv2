@@ -1,24 +1,11 @@
 const {Mdas_Dataset} = require("../models/mda.model");
-const { Mda_Directory } = require("../models/mda.directory.model");
-
-
 
 const addMda = async (req, res) => {
 
     try {
 
         const mdas = await Mdas_Dataset.create(req.body);
-
-        const mdaDirectory = await Mda_Directory.create( { "name" : req.body.name } );
-
-        mdas.info = mdaDirectory;
-        await mdas.save();
-
-        mdaDirectory.parent = mdas;
-        await mdaDirectory.save();
-
-        const newMda = await Mda_Directory.findById(mdaDirectory._id);
-        res.status(200).json(await newMda.populate("parent"));
+        res.status(200).json({ status : "ok", message : "MDA added successfully...", data : mdas});
 
 
     } catch (error) {

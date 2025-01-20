@@ -36,6 +36,7 @@ const getAllNews = async (req, res) => {
     const limit = 20;
     const topic = (req.params.topic || "all")
     
+    
     try {
 
         if (topic !== "all") {
@@ -50,7 +51,7 @@ const getAllNews = async (req, res) => {
         } else {
 
             let count = await news.estimatedDocumentCount();
-            const newsRef = await news.find({}).sort({'date': -1}).limit(limit).skip(page * limit);
+            const newsRef = await news.find({}).sort({'date': -1}).limit(limit).skip(page * limit)
 
             res.status(200).json({ status : "ok", message : "Fetched all data successfully...", data : newsRef, length : count })
         }
