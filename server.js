@@ -22,6 +22,9 @@ const eventRoutes = require("./routes/events.routes.js");
 
 // MDA Admin Routes
 const mist = require("./routes/admin/mist.routes.js");
+const mof = require("./routes/admin/mof.js");
+const moh = require("./routes/admin/moh.js");
+const sto = require("./routes/admin/sto.js");
 
 const base_url = '/api/v2'
 
@@ -37,8 +40,9 @@ app.use(`${base_url}/user`, userRoutes);
 app.use(`${base_url}/admin`, adminRoutes);
 app.use(`${base_url}/events`, eventRoutes);
 app.use(`${base_url}/mist`, mist);
-
-
+app.use(`${base_url}/mof`, mof);
+app.use(`${base_url}/moh`, moh);
+app.use(`${base_url}/sto`, sto);
 
 
 // Connection to the DB

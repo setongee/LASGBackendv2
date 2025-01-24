@@ -3,7 +3,7 @@ const UploaderMiddleware = require("../services/uploader/uploader");
 
 const data = {
 
-    name : "mist",
+    name : "sto",
     mission : "",
     vision : "",
     responsibilities : "",
@@ -19,12 +19,12 @@ const data = {
 
 const addDir = async (req, res) => {
 
-    // console.log(req.body)
+    console.log(req.body)
 
     try {
 
-        // const dir = await Mda_Directory.create(data);
-        // res.status(200).json({status : "ok", message : "Directory Created Successfully", data : dir});
+        const dir = await Mda_Directory.create(data);
+        res.status(200).json({status : "ok", message : "Directory Created Successfully", data : dir});
         
     } catch (error) {
 

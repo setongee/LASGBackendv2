@@ -15,7 +15,11 @@ const MdaDirectorySchema = mongoose.Schema(
         
         vision : {type : String, default : ""},
 
+        goal : {type : String, default : ""},
+
         responsibilities : { type : String },
+
+        resources : { type : Array },
 
         people : {
             type : Array
