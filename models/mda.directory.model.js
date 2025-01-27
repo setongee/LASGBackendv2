@@ -21,6 +21,15 @@ const MdaDirectorySchema = mongoose.Schema(
 
         resources : { type : Array },
 
+        statistics : {
+
+            budgetSize : {type : String, default : ""},
+            expenditure : {type : String, default : ""},
+            capex : {type : String, default : ""},
+            igr : {type : String, default : ""},
+
+        },
+
         people : {
             type : Array
         },

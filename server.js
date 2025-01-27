@@ -25,13 +25,14 @@ const mist = require("./routes/admin/mist.routes.js");
 const mof = require("./routes/admin/mof.js");
 const moh = require("./routes/admin/moh.js");
 const sto = require("./routes/admin/sto.js");
+const mepb = require("./routes/admin/mepb.js");
 
 const base_url = '/api/v2'
 
 //Api Routes Function
 app.use(`${base_url}/mdas`, MdaRoutes );
-app.use(`${base_url}/directory`, MdaDirectoryRoutes );
-app.use(`${base_url}/category`, CategoryRoutes );
+app.use(`${base_url}/directory`, MdaDirectoryRoutes);
+app.use(`${base_url}/category`, CategoryRoutes);
 app.use(`${base_url}/services`, serviceRoutes);
 app.use(`${base_url}/news`, NewsRoutes);
 app.use(`${base_url}/executives`, ExecutivesRoutes);
@@ -43,6 +44,7 @@ app.use(`${base_url}/mist`, mist);
 app.use(`${base_url}/mof`, mof);
 app.use(`${base_url}/moh`, moh);
 app.use(`${base_url}/sto`, sto);
+app.use(`${base_url}/mepb`, mepb);
 
 
 // Connection to the DB
