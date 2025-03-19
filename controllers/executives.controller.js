@@ -62,6 +62,24 @@ const getSingleMember = async (req, res) => {
 
 }
 
+const getSingleMemberByName = async (req, res) => {
+
+    try {
+
+        const { name } = req.params;
+
+        const executivesRef = await executives.find( { fullname : name } );
+        res.status(200).json({ status : "ok", message : "Fetched single data successfully...", data : await executivesRef })
+        
+    } 
+    catch (error) {
+
+        res.status(500).json({message : error.message})
+        
+    }
+
+}
+
 const updateExecutiveCouncilMember = async (req, res) => {
 
     try {
@@ -130,6 +148,7 @@ module.exports = {
     updateExecutiveCouncilMember,
     addExecutiveCouncilMember,
     getAllCouncilMembers,
-    getSingleMember
+    getSingleMember,
+    getSingleMemberByName
 
 }

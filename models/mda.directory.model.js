@@ -12,7 +12,7 @@ const MdaDirectorySchema = mongoose.Schema(
         },
 
         mission : {type : String, default : ""},
-        
+
         vision : {type : String, default : ""},
 
         goal : {type : String, default : ""},
@@ -53,4 +53,4 @@ const MdaDirectorySchema = mongoose.Schema(
 
 const Mda_Directory = mongoose.model("mda_directory", MdaDirectorySchema);
 
-module.exports = { Mda_Directory};  
+module.exports = { Mda_Directory};

@@ -25,11 +25,11 @@ const addDir = async (req, res) => {
 
     //     const dir = await Mda_Directory.create(data);
     //     res.status(200).json({status : "ok", message : "Directory Created Successfully", data : dir});
-        
+
     // } catch (error) {
 
     //     console.log(error)
-        
+
     // }
 
 }
@@ -124,7 +124,7 @@ const uploadFile = async (req, res) => {
     catch (error) {
 
         res.status(500).json({message : error.message})
-        
+
     }
 
 }
