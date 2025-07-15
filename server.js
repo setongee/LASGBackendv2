@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require('cors');
-const port = 8000
+const port = 8083
 
 app.use(cors());
 app.use(express.json({limit : '50mb'}));
