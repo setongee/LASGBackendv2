@@ -54,6 +54,7 @@ const allowedOrigins = [
   "https://lagosstate.gov.ng",
   "https://3dlk7dwr-5174.uks1.devtunnels.ms/",
   "https://lasg-ai-p2.vercel.app",
+  "https://mepb.vercel.app",
 ];
 
 app.use(
