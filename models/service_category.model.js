@@ -1,50 +1,42 @@
 const mongoose = require("mongoose");
 
-const CategorySchema = mongoose.Schema({
-
-    name : {
-        type : String,
-        required : true
+const CategorySchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
 
-    formattedName : {
-
-        type : String
-
+    formattedName: {
+      type: String,
     },
 
-    keywords : {
-        type : Array,
-        required : true
+    keywords: {
+      type: Array,
+      default: [],
     },
 
-    short : {
-
-        type : String,
-        required : true
-
+    short: {
+      type: String,
+      required: true,
     },
 
-    icon : {
-        type : Object,
-        required : true
+    icon: {
+      type: Object,
+      required: true,
     },
 
-    isOffline : {
+    isOffline: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+  },
 
-        type : Boolean,
-        default : false,
-        required : true
-
-    }
-},
-
-{
-    timestamps : true
-}
-
-)
-
+  {
+    timestamps: true,
+  },
+);
 
 const Category = mongoose.model("service_category", CategorySchema);
 

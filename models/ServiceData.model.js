@@ -1,78 +1,76 @@
 const mongoose = require("mongoose");
 
-const servicesSchema = mongoose.Schema({
-
-    name : {
-        type : String,
-        required : true
+const servicesSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
 
-    short : {
-        type : String,
-        required : true
+    short: {
+      type: String,
+      required: true,
     },
 
-    cta : {
-        type : String,
-        required : true
+    cta: {
+      type: String,
+      required: true,
     },
 
-    pin : {
-        type : String
+    pin: {
+      type: String,
     },
 
-    keywordsTrim : {
-        type : Array,
-        required : true
+    keywordsTrim: {
+      type: Array,
+      default: [],
     },
 
-    keywordsGroup : {
-        type : Object,
-        required : true
+    keywordsGroup: {
+      type: Object,
+      default: {},
     },
 
-    customKeywords : {
-        type : Array
+    customKeywords: {
+      type: Array,
+      default: [],
     },
 
-    keywords : {
-        type : Array,
-        required : true
+    keywords: {
+      type: Array,
+      default: [],
     },
 
-    url : {
-        type : String,
-        required : true
+    url: {
+      type: String,
+      required: true,
     },
 
-    categories : {
-        type : Array,
-        required : true
+    categories: {
+      type: Array,
+      required: true,
     },
 
-    formattedName : {
-        type : Array,
-        required : true
+    formattedName: {
+      type: Array,
+      required: true,
     },
 
-    content : {
-        type : String,
-        required : true
+    content: {
+      type: String,
+      required: true,
     },
 
-    isOffline : {
-        type : Boolean,
-        default : false
+    isOffline: {
+      type: Boolean,
+      default: false,
     },
+  },
 
-},
-
-{
-    timestamps : true
-}
-
-
-)
+  {
+    timestamps: true,
+  },
+);
 
 const services = mongoose.model("services", servicesSchema);
 

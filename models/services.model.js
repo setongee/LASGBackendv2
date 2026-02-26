@@ -1,78 +1,80 @@
 const mongoose = require("mongoose");
 
-const servicesSchema = mongoose.Schema({
-
-    name : {
-        type : String,
-        required : true
+const servicesSchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
 
-    short : {
-        type : String,
-        required : true
+    author: {
+      type: String,
+      default: "lasg-admin",
     },
 
-    cta : {
-        type : String,
-        required : true
+    short: {
+      type: String,
+      required: true,
     },
 
-    pin : {
-        type : String
+    cta: {
+      type: String,
+      required: true,
     },
 
-    keywordsTrim : {
-        type : Array,
-        required : true
+    pin: {
+      type: String,
     },
 
-    keywordsGroup : {
-        type : Object,
-        required : true
+    keywordsTrim: {
+      type: Array,
+      required: true,
     },
 
-    customKeywords : {
-        type : Array
+    keywordsGroup: {
+      type: Object,
+      required: true,
     },
 
-    keywords : {
-        type : Array,
-        required : true
+    customKeywords: {
+      type: Array,
     },
 
-    url : {
-        type : String,
-        required : true
+    keywords: {
+      type: Array,
+      required: true,
     },
 
-    categories : {
-        type : Array,
-        required : true
+    url: {
+      type: String,
+      required: true,
     },
 
-    formattedName : {
-        type : Array,
-        required : true
+    categories: {
+      type: Array,
+      required: true,
     },
 
-    content : {
-        type : String,
-        required : true
+    formattedName: {
+      type: Array,
+      required: true,
     },
 
-    isOffline : {
-        type : Boolean,
-        default : false
+    content: {
+      type: String,
+      required: true,
     },
 
-},
+    isOffline: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
-{
-    timestamps : true
-}
-
-
-)
+  {
+    timestamps: true,
+  },
+);
 
 const services = mongoose.model("services", servicesSchema);
 
