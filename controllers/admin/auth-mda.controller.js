@@ -212,8 +212,6 @@ const addLastLogin = async (id, date) => {
 // refreshAuthToken
 const refreshAuthToken = (req, res) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
-  console.log(req.headers);
-  console.log(authHeader);
 
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized" });

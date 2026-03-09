@@ -100,6 +100,7 @@ const logger = require("./routes/logger.routes.js");
 const webTemplateRequestRoutes = require("./routes/web-template-request.routes");
 const createMDARoutes = require("./routes/admin/createMDA.routes.js");
 const draftRoutes = require("./routes/draft.routes");
+const publishBucketRoutes = require("./routes/publish-bucket.routes");
 
 const base_url = "/api/v2";
 
@@ -126,6 +127,7 @@ app.use(`${base_url}/logger`, logger);
 app.use(`${base_url}/web-template-requests`, webTemplateRequestRoutes);
 app.use(`${base_url}/create-mdas`, createMDARoutes);
 app.use(`${base_url}/draft`, draftRoutes);
+app.use(`${base_url}/publish-bucket`, publishBucketRoutes);
 
 // DB connection
 mongoose

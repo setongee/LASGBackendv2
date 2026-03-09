@@ -6,6 +6,7 @@ const {
   updateMdaDirectory,
   addDir,
   uploadFile,
+  deleteMdaDirectory,
 } = require("../controllers/MdaDirectory.controller");
 
 //addd dir
@@ -22,5 +23,8 @@ router.get("/:id", getSingleMdaDirectory);
 
 //Update Single Mda
 router.put("/update/:id", updateMdaDirectory);
+
+//Delete Mda Directory
+router.delete("/delete/:id", deleteMdaDirectory);
 
 module.exports = router;

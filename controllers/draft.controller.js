@@ -3,8 +3,6 @@ const Draft = require("../models/draft.model");
 const createDraft = async (req, res) => {
   try {
     const { title, data, mda } = req.body;
-    console.log(req.body);
-    console.log(title, data, mda);
 
     const newDraft = await Draft({
       title,

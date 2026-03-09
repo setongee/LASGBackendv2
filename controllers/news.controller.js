@@ -79,7 +79,6 @@ const getAllNewsCount = async (req, res) => {
 const getNewsForMda = async (req, res) => {
   try {
     const { mda } = req.params;
-    console.log(mda);
     const newsRef = await news.find({ mda: mda });
 
     res.status(200).json({

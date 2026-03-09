@@ -1,22 +1,32 @@
 const express = require("express");
 
-const { addSubscribers, getAllSubscriptions, getSingleSubscriptions, updateSubscription, cancelSubscriptions } = require("../controllers/subscriptions");
+const {
+  addSubscribers,
+  getAllSubscriptions,
+  getSingleSubscriptions,
+  updateSubscription,
+  cancelSubscriptions,
+  getSubscriptionsByMda,
+} = require("../controllers/subscriptions");
 
 const router = express.Router();
 
 //add subscriber
-router.post('/subscribe', addSubscribers);
+router.post("/subscribe", addSubscribers);
 
 //get subscribers
-router.get('/all', getAllSubscriptions);
+router.get("/all", getAllSubscriptions);
 
 //get single subscriber
-router.get('/:id', getSingleSubscriptions);
+router.get("/:id", getSingleSubscriptions);
+
+//get subscribers by MDA
+router.get("/mda/:mdaId", getSubscriptionsByMda);
 
 //update subscriber
-router.put('/:id/update', updateSubscription );
+router.put("/:id/update", updateSubscription);
 
 //cancel subscriptions
-router.delete('/cancel', cancelSubscriptions);
+router.delete("/delete/:id", cancelSubscriptions);
 
 module.exports = router;

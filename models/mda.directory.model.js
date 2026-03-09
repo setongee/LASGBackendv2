@@ -11,6 +11,12 @@ const MdaDirectorySchema = mongoose.Schema(
       default: "",
     },
 
+    type: {
+      type: String,
+      required: true,
+      enum: ["full", "service"],
+    },
+
     slug: { type: String, default: "" },
 
     theme: {
@@ -68,6 +74,11 @@ const MdaDirectorySchema = mongoose.Schema(
     services: {
       type: Array,
       default: [],
+    },
+
+    adminUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "mda-admin-users",
     },
   },
 

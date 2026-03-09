@@ -38,6 +38,10 @@ const MdaAdminUser = mongoose.Schema(
       type: String,
       required: true,
     },
+    mdaFullname: {
+      type: String,
+      required: true,
+    },
   },
 
   {
