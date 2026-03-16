@@ -48,6 +48,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://lagosstate.gov.ng",
+  "https://web3.lagosstate.gov.ng",
   "https://mepb.vercel.app",
   "https://transportation-blush.vercel.app",
   "https://backendadmin.lagosstate.gov.ng/",
@@ -76,8 +77,8 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: false, limit: "50mb" }));
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ extended: false, limit: "100mb" }));
 
 // Routes imports
 const MdaRoutes = require("./routes/Mda.routes.js");
