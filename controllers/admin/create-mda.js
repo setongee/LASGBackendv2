@@ -1,6 +1,20 @@
 const { Mda_Directory } = require("../../models/mda.directory.model");
 const MdaAdminUser = require("../../models/admin/admin-auth.model");
 const bcrypt = require("bcrypt");
+const { v4: uuid } = require("uuid");
+const { sendEmail } = require("../../services/email/email");
+
+// Password generator function
+const generatePassword = (mdaSlug) => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let randomString = "";
+  for (let i = 0; i < 5; i++) {
+    randomString += characters.charAt(
+      Math.floor(Math.random() * characters.length),
+    );
+  }
+  return `LASG-${mdaSlug}@${randomString}`;
+};
 
 const createMdaAdmin = async (req, res) => {
   try {
@@ -8,7 +22,6 @@ const createMdaAdmin = async (req, res) => {
       firstname,
       lastname,
       email,
-      password,
       role,
       mdaFullname,
       proposedSlug,
@@ -20,7 +33,6 @@ const createMdaAdmin = async (req, res) => {
       !firstname ||
       !lastname ||
       !email ||
-      !password ||
       !role ||
       !mdaFullname ||
       !proposedSlug ||
@@ -29,7 +41,7 @@ const createMdaAdmin = async (req, res) => {
       return res.status(400).json({
         status: "error",
         message:
-          "All fields are required: firstname, lastname, email, password, role, mdaFullname, proposedSlug, type",
+          "All fields are required: firstname, lastname, email, role, mdaFullname, proposedSlug, type",
       });
     }
 
@@ -59,6 +71,9 @@ const createMdaAdmin = async (req, res) => {
       });
     }
 
+    // Generate password using MDA slug
+    const generatedPassword = generatePassword(proposedSlug);
+
     // Create MDA record
     const mdaData = {
       fullname: mdaFullname,
@@ -76,9 +91,9 @@ const createMdaAdmin = async (req, res) => {
 
     const createdMda = await Mda_Directory.create(mdaData);
 
-    // Hash password
+    // Hash the generated password
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(generatedPassword, salt);
 
     // Create admin user
     const adminUser = new MdaAdminUser({
@@ -103,15 +118,37 @@ const createMdaAdmin = async (req, res) => {
       "firstname lastname email role mda mdaFullname",
     );
 
-    // Remove password from response
-    adminUser.password = password;
+    sendEmail({
+      to: { email, name: `${firstname} ${lastname}` },
+      subject: `Lagos State ${mdaFullname} Web Portal Account Created`,
+      content: `${firstname} ${lastname}, an account has been created for you to set up the Lagos State ${mdaFullname} portal.
+      
+This is your public url for this MDA: https://lagosstate.gov.ng/${proposedSlug}
+      
+Kindly use the following credentials to log in: 
+Your email is ${email} 
+and your password is ${generatedPassword} 
+The URL to login is: https://lagosstate.gov.ng/${proposedSlug}/admin/login  
+
+
+Note: By default your application is offline and needs to be activated by the LASG Admin Team once all setup has been done`,
+    })
+      .then(() => {
+        console.log("Email sent successfully");
+      })
+      .catch((error) => {
+        console.error("Error sending email:", error);
+      });
 
     res.status(201).json({
       status: "success",
       message: "MDA and admin user created successfully",
       data: {
         mda: mdaWithAdmin,
-        admin: adminUser,
+        admin: {
+          ...adminUser.toObject(),
+          password: generatedPassword, // Include plain password for sending to user
+        },
       },
     });
   } catch (error) {

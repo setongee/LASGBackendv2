@@ -99,6 +99,42 @@ const uploadFile = async (req, res) => {
   }
 };
 
+const getAllResources = async (req, res) => {
+  try {
+    // Find all MDAs that have resources
+    const mdasWithResources = await Mda_Directory.find({
+      resources: { $exists: true, $ne: [] },
+    }).select("fullname resources");
+
+    // Flatten all resources and map to required format
+    const allResources = [];
+
+    mdasWithResources.forEach((mda) => {
+      if (mda.resources && mda.resources.length > 0) {
+        mda.resources.forEach((resource) => {
+          allResources.push({
+            name: resource.name || resource.title || "Untitled Resource",
+            url: resource.url || resource.link || "",
+            mdaFullname: mda.fullname,
+          });
+        });
+      }
+    });
+
+    res.status(200).json({
+      status: "ok",
+      message: "All resources retrieved successfully",
+      data: allResources,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Failed to retrieve resources",
+      error: error.message,
+    });
+  }
+};
+
 const deleteMdaDirectory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -130,10 +166,11 @@ const deleteMdaDirectory = async (req, res) => {
 };
 
 module.exports = {
-  getAllMdaDirectory,
-  updateMdaDirectory,
-  getSingleMdaDirectory,
   addDir,
-  uploadFile,
+  getAllMdaDirectory,
+  getSingleMdaDirectory,
+  updateMdaDirectory,
   deleteMdaDirectory,
+  uploadFile,
+  getAllResources,
 };

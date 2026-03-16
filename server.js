@@ -47,14 +47,10 @@ app.get("/", (req, res) => {
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  "http://localhost:5176",
-  "http://localhost:5177",
   "https://lagosstate.gov.ng",
-  "https://3dlk7dwr-5174.uks1.devtunnels.ms/",
-  "https://lasg-ai-p2.vercel.app",
   "https://mepb.vercel.app",
+  "https://transportation-blush.vercel.app",
+  "https://backendadmin.lagosstate.gov.ng/",
 ];
 
 app.use(
@@ -62,11 +58,19 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
+      // Check if origin is in allowed list
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
       }
+
+      // Check if origin is a subdomain of lagosstate.gov.ng
+      const subdomainPattern =
+        /^https:\/\/([a-zA-Z0-9-]+\.)*lagosstate\.gov\.ng$/;
+      if (subdomainPattern.test(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   }),
@@ -101,6 +105,8 @@ const webTemplateRequestRoutes = require("./routes/web-template-request.routes")
 const createMDARoutes = require("./routes/admin/createMDA.routes.js");
 const draftRoutes = require("./routes/draft.routes");
 const publishBucketRoutes = require("./routes/publish-bucket.routes");
+const documentUploadRoutes = require("./routes/document-upload.routes");
+const formsRoutes = require("./routes/forms.routes");
 
 const base_url = "/api/v2";
 
@@ -128,6 +134,8 @@ app.use(`${base_url}/web-template-requests`, webTemplateRequestRoutes);
 app.use(`${base_url}/create-mdas`, createMDARoutes);
 app.use(`${base_url}/draft`, draftRoutes);
 app.use(`${base_url}/publish-bucket`, publishBucketRoutes);
+app.use(`${base_url}/documents`, documentUploadRoutes);
+app.use(`${base_url}/forms`, formsRoutes);
 
 // DB connection
 mongoose

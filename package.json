@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/setongee/LASGBackendv2#readme",
   "dependencies": {
+    "axios": "^1.13.6",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.2.0",
     "cors": "^2.8.5",
@@ -28,7 +29,9 @@
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.6.1",
-    "mongoose": "^8.3.4"
+    "mongoose": "^8.3.4",
+    "multer": "^2.1.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

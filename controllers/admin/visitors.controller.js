@@ -13,6 +13,9 @@ const handleAnalytics = async (req, res) => {
       browser: req.body.browser,
       device: req.body.device,
       os: req.body.os,
+      isAuthentic:
+        req.body.isAuthentic !== undefined ? req.body.isAuthentic : true,
+      slug: req.body.slug,
     });
 
     await visit.save();
@@ -47,6 +50,7 @@ const getSiteStats = async (req, res) => {
     const baseQuery = {
       siteName,
       timestamp: { $gte: startDate },
+      isAuthentic: true,
     };
 
     // Get total visits for this site
@@ -148,6 +152,7 @@ const getCustomStats = async (req, res) => {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
       },
+      isAuthentic: true,
     };
 
     const totalVisits = await Visit.countDocuments(query);
@@ -199,6 +204,7 @@ const getVisitsBySites = async (req, res) => {
       {
         $match: {
           timestamp: { $gte: startDate },
+          isAuthentic: true,
         },
       },
       {
@@ -234,9 +240,119 @@ const getVisitsBySites = async (req, res) => {
   }
 };
 
+const getAllVisits = async (req, res) => {
+  try {
+    const { period } = req.query;
+
+    const dateRanges = {
+      today: new Date(new Date().setHours(0, 0, 0, 0)),
+      week: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      month: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      "3months": new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+      year: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+    };
+
+    const startDate = dateRanges[period] || dateRanges.week;
+    const baseQuery = {
+      timestamp: { $gte: startDate },
+      isAuthentic: true,
+    };
+
+    // Get total visits
+    const totalVisits = await Visit.countDocuments(baseQuery);
+
+    // Get unique users
+    const uniqueUsers = await Visit.distinct("userId", {
+      ...baseQuery,
+      userId: { $ne: null },
+    });
+
+    // Get unique sessions
+    const uniqueSessions = await Visit.distinct("sessionId", baseQuery);
+
+    // Get visits by day
+    const visitsByDay = await Visit.aggregate([
+      { $match: baseQuery },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$timestamp" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // Get top 5 performing sites
+    const topSites = await Visit.aggregate([
+      { $match: baseQuery },
+      {
+        $group: {
+          _id: "$siteName",
+          totalVisits: { $sum: 1 },
+          uniqueUsers: { $addToSet: "$userId" },
+          uniqueSessions: { $addToSet: "$sessionId" },
+        },
+      },
+      {
+        $project: {
+          siteName: "$_id",
+          totalVisits: 1,
+          uniqueUsers: { $size: "$uniqueUsers" },
+          uniqueSessions: { $size: "$uniqueSessions" },
+        },
+      },
+      { $sort: { totalVisits: -1 } },
+      { $limit: 5 },
+    ]);
+
+    // Get device breakdown
+    const deviceBreakdown = await Visit.aggregate([
+      { $match: baseQuery },
+      {
+        $group: {
+          _id: "$device",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Get browser breakdown
+    const browserBreakdown = await Visit.aggregate([
+      { $match: baseQuery },
+      {
+        $group: {
+          _id: "$browser",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.json({
+      success: true,
+      period,
+      startDate,
+      stats: {
+        totalVisits,
+        uniqueUsers: uniqueUsers.length,
+        uniqueSessions: uniqueSessions.length,
+        visitsByDay,
+        topSites,
+        deviceBreakdown,
+        browserBreakdown,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching all visits:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 module.exports = {
   handleAnalytics,
   getSiteStats,
   getCustomStats,
   getVisitsBySites,
+  getAllVisits,
 };

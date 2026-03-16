@@ -29,6 +29,11 @@ const visitorsSchema = mongoose.Schema({
   browser: String,
   device: String,
   os: String,
+  isAuthentic: {
+    type: Boolean,
+    default: true,
+  },
+  slug: String,
 });
 
 visitorsSchema.index({ siteName: 1, timestamp: -1 });
