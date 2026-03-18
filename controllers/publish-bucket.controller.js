@@ -208,8 +208,14 @@ const updatePublishBucket = async (req, res) => {
         const updateData = {
           $set: {
             landingPage: draft.data, // Replace landingPage with draft data
+            isOffline: false, // Always set to false when publishing
           },
         };
+
+        // Check if this is the first time publishing and update the flag
+        if (!mdaDirectory.isFirstTimePublished) {
+          updateData.$set.isFirstTimePublished = true;
+        }
 
         await Mda_Directory.findByIdAndUpdate(mdaDirectory._id, updateData);
       } catch (error) {

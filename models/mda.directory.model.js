@@ -29,6 +29,11 @@ const MdaDirectorySchema = mongoose.Schema(
       default: false,
     },
 
+    isFirstTimePublished: {
+      type: Boolean,
+      default: false,
+    },
+
     agencies: {
       type: Array,
     },

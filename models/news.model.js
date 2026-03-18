@@ -1,44 +1,48 @@
 const mongoose = require("mongoose");
 
-const newsSchema = mongoose.Schema({
-
-    title : {
-        type : String,
-        required : true
+const newsSchema = mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
     },
 
-    mda : {
-        type : String
+    mda: {
+      type: String, // Keep as string for backward compatibility
+      default: "",
     },
 
-    date : {
-        type : Object,
-        required : true
+    targetMDA: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "mda_directory", // Use the correct model name
+      default: [], // New field for ObjectId references
     },
 
-    photo : {
-        type : Object,
-        required : true
+    date: {
+      type: Object,
+      required: true,
     },
 
-    content : {
-        type : String,
-        required : true
+    photo: {
+      type: Object,
+      required: true,
     },
 
-    categories : {
-        type : Array,
-        required : true
-    }
+    content: {
+      type: String,
+      required: true,
+    },
 
-},
+    categories: {
+      type: Array,
+      required: true,
+    },
+  },
 
-{
-    timestamps : true
-}
-
-)
-
+  {
+    timestamps: true,
+  },
+);
 
 const news = mongoose.model("news", newsSchema);
 

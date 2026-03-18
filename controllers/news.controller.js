@@ -6,7 +6,13 @@ const addNews = async (req, res) => {
   try {
     const { photo } = req.body;
 
-    const newsRef = await news.create(req.body);
+    // Handle targetMDA array - if targetMDA is provided, ensure it's an array
+    const newsData = { ...req.body };
+    if (req.body.targetMDA && !Array.isArray(req.body.targetMDA)) {
+      newsData.targetMDA = [req.body.targetMDA];
+    }
+
+    const newsRef = await news.create(newsData);
 
     if (Object.keys(photo).length) {
       await UploaderMiddleware(photo).then(async (response) => {
@@ -79,12 +85,13 @@ const getAllNewsCount = async (req, res) => {
 const getNewsForMda = async (req, res) => {
   try {
     const { mda } = req.params;
-    const newsRef = await news.find({ mda: mda });
+    // Find news where targetMDA array contains the specified MDA ID
+    const newsRef = await news.find({ targetMDA: { $in: [mda] } });
 
     res.status(200).json({
       status: "ok",
-      message: "Fetched all data successfully...",
-      data: await newsRef,
+      message: "Fetched all news for MDA successfully...",
+      data: newsRef,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -110,9 +117,17 @@ const updateNews = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const newsRef = await news.findByIdAndUpdate(id, req.body);
+    // Handle targetMDA array update - if targetMDA is provided, update it
+    const updateData = { ...req.body };
 
-    if (req.body.photo.data !== undefined) {
+    // If targetMDA is provided in the request, ensure it's an array
+    if (req.body.targetMDA && !Array.isArray(req.body.targetMDA)) {
+      updateData.targetMDA = [req.body.targetMDA];
+    }
+
+    const newsRef = await news.findByIdAndUpdate(id, updateData);
+
+    if (req.body.photo && req.body.photo.data !== undefined) {
       await UploaderMiddleware(req.body.photo).then(async (response) => {
         newsRef.photo = response.secure_url;
         await newsRef.save();
@@ -144,9 +159,7 @@ const deleteNews = async (req, res) => {
         .status(200)
         .json({ status: "ok", message: "News deleted successfully..." });
     } else {
-      res
-        .status(404)
-        .json({ status: "error", message: "Category not found..." });
+      res.status(404).json({ status: "error", message: "News not found..." });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
