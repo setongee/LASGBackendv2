@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.disable("x-powered-by");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require("cors");

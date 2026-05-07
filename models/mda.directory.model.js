@@ -43,6 +43,8 @@ const MdaDirectorySchema = mongoose.Schema(
       default: true,
     },
 
+    logo: { type: String, default: null },
+
     mission: { type: String, default: "" },
 
     vision: { type: String, default: "" },
