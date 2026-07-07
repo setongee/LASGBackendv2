@@ -1,6 +1,6 @@
-import axios from "axios";
+const axios = require("axios");
 
-export const sendEmail = async ({ to, subject, content }) => {
+const sendEmail = async ({ to, subject, content }) => {
   try {
     if (!to || !subject || !content) {
       return {
@@ -52,3 +52,5 @@ export const sendEmail = async ({ to, subject, content }) => {
     };
   }
 };
+
+module.exports = { sendEmail };

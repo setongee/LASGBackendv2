@@ -7,6 +7,8 @@ const {
   getUsers,
   deleteUser,
   refreshAuthToken,
+  requestOtp,
+  verifyOtp,
 } = require("../../controllers/admin/auth-mda.controller");
 const { authenticateToken2 } = require("../../middleware/authenticateToken");
 const router = express.Router();
@@ -19,5 +21,7 @@ router.post("/user/auth/password/:id", updatePassword);
 router.get("/user/:id", getUser);
 router.delete("/user/:id", deleteUser);
 router.post("/refresh-token", refreshAuthToken);
+router.post("/forgot-password", requestOtp);
+router.post("/verify-otp", verifyOtp);
 
 module.exports = router;

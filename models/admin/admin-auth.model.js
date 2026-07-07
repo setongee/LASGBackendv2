@@ -42,6 +42,21 @@ const MdaAdminUser = mongoose.Schema(
       type: String,
       required: true,
     },
+
+    otp: {
+      type: String,
+      default: null,
+    },
+
+    otpExpiry: {
+      type: Date,
+      default: null,
+    },
+
+    resetRequested: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   {

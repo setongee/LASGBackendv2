@@ -14,6 +14,10 @@ const {
 const {
   refreshAuthToken,
 } = require("../controllers/admin/auth-mda.controller");
+const {
+  getResetRequests,
+  resetMdaPassword,
+} = require("../controllers/admin/mda-reset.controller");
 const router = express.Router();
 
 router.post("/register", register);
@@ -24,5 +28,9 @@ router.post("/login/authenticate", authenticateToken2);
 router.post("/user/auth/password/:id", updatePassword);
 router.get("/user/:id", getUser);
 router.delete("/user/:id", deleteUser);
+
+// MDA password reset management (super admin)
+router.get("/mda-reset-requests", getResetRequests);
+router.post("/mda-reset-password/:id", resetMdaPassword);
 
 module.exports = router;
