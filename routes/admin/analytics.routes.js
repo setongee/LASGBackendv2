@@ -5,6 +5,9 @@ const {
   getCustomStats,
   getVisitsBySites,
   getAllVisits,
+  getTotalVisits,
+  getVisitsTimeseries,
+  getTopVisitedApplications,
 } = require("../../controllers/admin/visitors.controller");
 const router = express.Router();
 
@@ -13,5 +16,8 @@ router.get("/visits", getSiteStats);
 router.get("/visits/custom", getCustomStats);
 router.get("/visits/sites", getVisitsBySites);
 router.get("/visits/all", getAllVisits);
+router.get("/visits/total", getTotalVisits);
+router.get("/visits/timeseries", getVisitsTimeseries);
+router.get("/visits/top-applications", getTopVisitedApplications);
 
 module.exports = router;

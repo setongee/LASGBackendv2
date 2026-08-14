@@ -1,6 +1,10 @@
 const PublishBucket = require("../models/publish-bucket.model");
 const Draft = require("../models/draft.model");
 const { Mda_Directory } = require("../models/mda.directory.model");
+const {
+  createNotification,
+  NOTIFICATION_TYPES,
+} = require("../services/notification/notification.service");
 
 const createPublishBucket = async (req, res) => {
   try {
@@ -28,6 +32,14 @@ const createPublishBucket = async (req, res) => {
       newPublishBucket.publishedAt = new Date();
       await newPublishBucket.save();
     }
+
+    await createNotification({
+      type: NOTIFICATION_TYPES.PUBLISH_PAGE_REQUEST,
+      title: "New publish request",
+      message: `${mda} submitted a page for publishing review.`,
+      mda,
+      relatedId: newPublishBucket._id,
+    });
 
     res.status(201).json({
       status: "ok",
@@ -86,10 +98,25 @@ const getPublishBucketsByStatus = async (req, res) => {
       createdAt: -1,
     });
 
+    const mdaNames = [...new Set(buckets.map((bucket) => bucket.mda))];
+    const directories = await Mda_Directory.find({
+      name: { $in: mdaNames },
+    }).select("name fullname");
+
+    const fullnameByName = directories.reduce((acc, dir) => {
+      acc[dir.name] = dir.fullname;
+      return acc;
+    }, {});
+
+    const bucketsWithFullname = buckets.map((bucket) => ({
+      ...bucket.toObject(),
+      mdaFullname: fullnameByName[bucket.mda] || bucket.mda,
+    }));
+
     res.status(200).json({
       status: "ok",
       message: `Fetched publish buckets with status ${status} successfully`,
-      data: buckets,
+      data: bucketsWithFullname,
     });
   } catch (error) {
     res.status(500).json({
@@ -141,8 +168,7 @@ const updatePublishBucket = async (req, res) => {
 
     // Validate status transitions
     const validTransitions = {
-      pending: ["content approved", "rejected"],
-      "content approved": ["published", "rejected"],
+      pending: ["published", "rejected"],
       rejected: ["pending"],
       published: [], // Published is final state
     };
@@ -157,20 +183,12 @@ const updatePublishBucket = async (req, res) => {
     const updateData = { status, notes, reasonForRejection };
 
     // Handle approvedBy object updates based on status
-    if (approvedBy && status) {
-      if (status === "content approved") {
-        updateData.approvedBy = {
-          ...currentBucket.approvedBy,
-          contentApprover: approvedBy,
-        };
-        updateData.contentApprovedAt = new Date();
-      } else if (status === "published") {
-        updateData.approvedBy = {
-          ...currentBucket.approvedBy,
-          publisher: approvedBy,
-        };
-        updateData.publishedAt = new Date();
-      }
+    if (approvedBy && status === "published") {
+      updateData.approvedBy = {
+        ...currentBucket.approvedBy,
+        publisher: approvedBy,
+      };
+      updateData.publishedAt = new Date();
     }
 
     // If status is being set to rejected, require reasonForRejection
@@ -261,9 +279,7 @@ const updatePublishBucketData = async (req, res) => {
 
     // Only allow data updates when status is pending or rejected
     if (
-      !["pending", "rejected", "content approved", "published"].includes(
-        currentBucket.status,
-      )
+      !["pending", "rejected", "published"].includes(currentBucket.status)
     ) {
       return res.status(400).json({
         status: "bad",

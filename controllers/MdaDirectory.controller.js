@@ -1,6 +1,7 @@
 const { Mda_Directory } = require("../models/mda.directory.model");
 const MdaAdminUser = require("../models/admin/admin-auth.model");
 const UploaderMiddleware = require("../services/uploader/uploader");
+const { generateUploadSignature } = require("../services/uploader/signature");
 
 const data = {
   name: "mot",
@@ -99,6 +100,21 @@ const uploadFile = async (req, res) => {
   }
 };
 
+const getUploadSignature = (req, res) => {
+  try {
+    const { public_id } = req.body;
+
+    if (!public_id) {
+      return res.status(400).json({ status: "bad", message: "public_id is required" });
+    }
+
+    const payload = generateUploadSignature(public_id);
+    res.status(200).json({ status: "ok", ...payload });
+  } catch (error) {
+    res.status(500).json({ status: "bad", message: error.message });
+  }
+};
+
 const getAllResources = async (req, res) => {
   try {
     // Find all MDAs that have resources
@@ -172,5 +188,6 @@ module.exports = {
   updateMdaDirectory,
   deleteMdaDirectory,
   uploadFile,
+  getUploadSignature,
   getAllResources,
 };

@@ -1,5 +1,9 @@
 const WebTemplateRequest = require("../models/web-template-request.model");
 const asyncHandler = require("express-async-handler");
+const {
+  createNotification,
+  NOTIFICATION_TYPES,
+} = require("../services/notification/notification.service");
 
 // @desc    Create a new web template request
 // @route   POST /api/web-template-requests
@@ -13,6 +17,14 @@ const createWebTemplateRequest = asyncHandler(async (req, res) => {
     additionalNotes,
     mda,
     requestedBy: req.body.requestedBy || "Anonymous",
+  });
+
+  await createNotification({
+    type: NOTIFICATION_TYPES.WEB_TEMPLATE_REQUEST,
+    title: "New web template request",
+    message: `${mda} requested the "${templateName}" template.`,
+    mda,
+    relatedId: request._id,
   });
 
   res.status(201).json({

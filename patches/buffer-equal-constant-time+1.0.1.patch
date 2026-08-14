@@ -1,0 +1,17 @@
+diff --git a/node_modules/buffer-equal-constant-time/index.js b/node_modules/buffer-equal-constant-time/index.js
+index 5462c1f..3ae97a3 100644
+--- a/node_modules/buffer-equal-constant-time/index.js
++++ b/node_modules/buffer-equal-constant-time/index.js
+@@ -1,7 +1,11 @@
+ /*jshint node:true */
+ 'use strict';
+ var Buffer = require('buffer').Buffer; // browserify
+-var SlowBuffer = require('buffer').SlowBuffer;
++// SlowBuffer was removed from the `buffer` module in newer Node.js versions.
++// It's only needed for the optional install()/restore() monkey-patch below,
++// so fall back to a no-op stand-in when it's unavailable.
++var SlowBuffer = require('buffer').SlowBuffer || function () {};
++if (!SlowBuffer.prototype) SlowBuffer.prototype = {};
+ 
+ module.exports = bufferEq;
+ 

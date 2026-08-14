@@ -6,6 +6,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { refreshToken } = require("../../utils/jwt.utils");
 const { sendEmail } = require("../../services/email/email");
+const {
+  createNotification,
+  NOTIFICATION_TYPES,
+} = require("../../services/notification/notification.service");
 
 const register = async (req, res) => {
   try {
@@ -259,17 +263,13 @@ const requestOtp = async (req, res) => {
     await sendEmail({
       to: { email: user.email, name: `${user.firstname} ${user.lastname}` },
       subject: "Your Password Reset Code",
-      content: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px;">
-          <h2 style="color: #00484d;">Password Reset Request</h2>
-          <p>Hello ${user.firstname},</p>
-          <p>You requested a password reset. Use the code below to verify your identity:</p>
-          <div style="background: #f2f8f5; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
-            <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #00484d;">${otp}</span>
-          </div>
-          <p style="color: #777; font-size: 13px;">This code expires in 10 minutes. If you did not request this, please ignore this email.</p>
-        </div>
-      `,
+      content: `Hello ${user.firstname},
+
+You requested a password reset. Use the code below to verify your identity:
+
+${otp}
+
+This code expires in 10 minutes. If you did not request this, please ignore this email.`,
     });
 
     return res.status(200).json({
@@ -315,6 +315,14 @@ const verifyOtp = async (req, res) => {
     user.resetRequested = true;
     await user.save();
 
+    await createNotification({
+      type: NOTIFICATION_TYPES.PASSWORD_RESET_REQUEST,
+      title: "Password reset request",
+      message: `${user.firstname} ${user.lastname} (${user.mdaFullname}) is requesting a password reset.`,
+      mda: user.mda,
+      relatedId: user._id,
+    });
+
     const superAdmins = await superAdminUser.find({ role: "admin" });
 
     await Promise.all(
@@ -322,19 +330,14 @@ const verifyOtp = async (req, res) => {
         sendEmail({
           to: { email: admin.email, name: `${admin.firstname} ${admin.lastname}` },
           subject: "Password Reset Request from MDA Admin",
-          content: `
-            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 30px;">
-              <h2 style="color: #00484d;">Password Reset Request</h2>
-              <p>An MDA admin has verified their identity and is requesting a password reset:</p>
-              <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                <tr><td style="padding: 8px; color: #555;">Name:</td><td style="padding: 8px; font-weight: bold;">${user.firstname} ${user.lastname}</td></tr>
-                <tr><td style="padding: 8px; color: #555;">Email:</td><td style="padding: 8px;">${user.email}</td></tr>
-                <tr><td style="padding: 8px; color: #555;">MDA:</td><td style="padding: 8px;">${user.mdaFullname}</td></tr>
-                <tr><td style="padding: 8px; color: #555;">Role:</td><td style="padding: 8px;">${user.role}</td></tr>
-              </table>
-              <p>Please log in to the Super Admin dashboard to reset their password and send them new credentials.</p>
-            </div>
-          `,
+          content: `An MDA admin has verified their identity and is requesting a password reset:
+
+Name: ${user.firstname} ${user.lastname}
+Email: ${user.email}
+MDA: ${user.mdaFullname}
+Role: ${user.role}
+
+Please log in to the Super Admin dashboard to reset their password and send them new credentials.`,
         })
       )
     );

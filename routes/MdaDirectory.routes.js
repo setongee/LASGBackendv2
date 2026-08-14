@@ -7,6 +7,7 @@ const {
   updateMdaDirectory,
   deleteMdaDirectory,
   uploadFile,
+  getUploadSignature,
   getAllResources,
 } = require("../controllers/MdaDirectory.controller");
 
@@ -15,6 +16,9 @@ router.post("/create", addDir);
 
 //Upload photo
 router.post("/upload", uploadFile);
+
+//Get a signature for direct browser-to-Cloudinary upload
+router.post("/upload-signature", getUploadSignature);
 
 //get All Mdas
 router.get("/all", getAllMdaDirectory);

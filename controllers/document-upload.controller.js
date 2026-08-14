@@ -15,7 +15,9 @@ const uploadDocument = async (req, res) => {
     }
 
     // Get folder name from request body or query params
-    const folder = req.body.folder || req.query.folder || "documents";
+    const rawFolder = req.body.folder || req.query.folder || "documents";
+    // Sanitize for use in Cloudinary public_id, keeping "/" for nested folders
+    const folder = rawFolder.replace(/[^a-zA-Z0-9/._-]/g, "_");
 
     // Prepare data for Cloudinary upload
     const sanitizedFileName = req.file.originalname.replace(

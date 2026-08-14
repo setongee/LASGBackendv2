@@ -14,14 +14,31 @@ const MdaDirectorySchema = mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["full", "service"],
+      enum: ["full", "service", "self-hosted"],
     },
 
     slug: { type: String, default: "" },
 
+    externalUrl: { type: String, default: "" },
+
     theme: {
       type: String,
       default: "none",
+    },
+
+    colorTheme: {
+      mode: {
+        type: String,
+        enum: ["preset", "gradient", "custom"],
+        default: "preset",
+      },
+      color: { type: String, default: "" },
+      gradientEnd: { type: String, default: "" },
+      appearance: {
+        type: String,
+        enum: ["light", "dark"],
+        default: "light",
+      },
     },
 
     isVerified: {

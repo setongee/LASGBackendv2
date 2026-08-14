@@ -16,7 +16,9 @@ const {
  *            "password": "string",
  *            "role": "string (admin|comms|ict)",
  *            "mdaFullname": "string",
- *            "proposedSlug": "string"
+ *            "proposedSlug": "string",
+ *            "type": "string (full|service|self-hosted)",
+ *            "externalUrl": "string (required, https, only when type=self-hosted)"
  *          }
  */
 router.post("/create", createMdaAdmin);
@@ -31,7 +33,8 @@ router.post("/create", createMdaAdmin);
  *            "email": "string (optional)",
  *            "fullname": "string (optional)",
  *            "slug": "string (optional)",
- *            "type": "string (optional, full|service)"
+ *            "type": "string (optional, full|service|self-hosted)",
+ *            "externalUrl": "string (required if type=self-hosted)"
  *          }
  */
 router.put("/update/:id", updateMdaAdmin);

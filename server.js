@@ -92,6 +92,7 @@ const Subscibers = require("./routes/subscribers.js");
 const userRoutes = require("./routes/user.routes.js");
 const adminRoutes = require("./routes/authAdmin.routes");
 const eventRoutes = require("./routes/events.routes.js");
+const galleryRoutes = require("./routes/gallery.routes.js");
 
 // MDA Admin Routes
 const mist = require("./routes/admin/mist.routes.js");
@@ -109,6 +110,8 @@ const draftRoutes = require("./routes/draft.routes");
 const publishBucketRoutes = require("./routes/publish-bucket.routes");
 const documentUploadRoutes = require("./routes/document-upload.routes");
 const formsRoutes = require("./routes/forms.routes");
+const notificationRoutes = require("./routes/notification.routes");
+const dashboardAlertsRoutes = require("./routes/dashboard-alerts.routes");
 
 const base_url = "/api/v2";
 
@@ -123,6 +126,7 @@ app.use(`${base_url}/subscribers`, Subscibers);
 app.use(`${base_url}/user`, userRoutes);
 app.use(`${base_url}/admin`, adminRoutes);
 app.use(`${base_url}/events`, eventRoutes);
+app.use(`${base_url}/gallery`, galleryRoutes);
 app.use(`${base_url}/mist`, mist);
 app.use(`${base_url}/mof`, mof);
 app.use(`${base_url}/health`, moh);
@@ -138,6 +142,8 @@ app.use(`${base_url}/draft`, draftRoutes);
 app.use(`${base_url}/publish-bucket`, publishBucketRoutes);
 app.use(`${base_url}/documents`, documentUploadRoutes);
 app.use(`${base_url}/forms`, formsRoutes);
+app.use(`${base_url}/notifications`, notificationRoutes);
+app.use(`${base_url}/dashboard-alerts`, dashboardAlertsRoutes);
 
 // DB connection
 mongoose

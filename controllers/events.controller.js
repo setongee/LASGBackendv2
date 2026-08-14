@@ -9,9 +9,12 @@ const addEvents = async (req, res) => {
         const {photo} = req.body
 
         const eventsRef = await events.create(req.body);
-        
-        if (Object.keys(photo).length) {
-            
+
+        // `photo` is either an already-uploaded URL string (direct-to-Cloudinary
+        // upload from the admin UI) or a legacy { temp, data } base64 payload
+        // that still needs uploading here.
+        if (photo && typeof photo === "object" && photo.data) {
+
             await UploaderMiddleware(photo).then( async response => {
 
                 eventsRef.photo = response.secure_url
@@ -108,7 +111,11 @@ const updateEvents = async (req, res) => {
 
         const eventsRef = await events.findByIdAndUpdate(id, req.body);
 
-        if (req.body.photo.data !== undefined) {
+        if (
+            req.body.photo &&
+            typeof req.body.photo === "object" &&
+            req.body.photo.data !== undefined
+        ) {
             
             await UploaderMiddleware(req.body.photo).then( async response => {
 

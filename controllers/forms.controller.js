@@ -1,5 +1,9 @@
 const Form = require("../models/form.model");
 const FormResponse = require("../models/form-response.model");
+const {
+  createNotification,
+  NOTIFICATION_TYPES,
+} = require("../services/notification/notification.service");
 
 // Create a new form
 const createForm = async (req, res) => {
@@ -97,6 +101,14 @@ const submitResponse = async (req, res) => {
     // Increment response count on the form
     form.responseCount += 1;
     await form.save();
+
+    await createNotification({
+      type: NOTIFICATION_TYPES.FORM_SUBMISSION,
+      title: "New form submission",
+      message: `A new response was submitted to "${form.title}".`,
+      mda: form.mda,
+      relatedId: response._id,
+    });
 
     res.status(201).json({ status: "ok", message: "Response submitted successfully.", data: response });
   } catch (error) {

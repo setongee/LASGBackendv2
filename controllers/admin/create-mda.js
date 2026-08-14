@@ -16,6 +16,15 @@ const generatePassword = (mdaSlug) => {
   return `LASG-${mdaSlug}@${randomString}`;
 };
 
+// A secure URL means https only — plain http is not accepted
+const isSecureUrl = (url) => {
+  try {
+    return new URL(url).protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 const createMdaAdmin = async (req, res) => {
   try {
     const {
@@ -26,39 +35,22 @@ const createMdaAdmin = async (req, res) => {
       mdaFullname,
       proposedSlug,
       type,
+      externalUrl,
     } = req.body;
 
-    // Validate required fields
-    if (
-      !firstname ||
-      !lastname ||
-      !email ||
-      !role ||
-      !mdaFullname ||
-      !proposedSlug ||
-      !type
-    ) {
+    // Validate required fields shared by every type
+    if (!mdaFullname || !proposedSlug || !type) {
       return res.status(400).json({
         status: "error",
-        message:
-          "All fields are required: firstname, lastname, email, role, mdaFullname, proposedSlug, type",
+        message: "mdaFullname, proposedSlug and type are required",
       });
     }
 
     // Validate type enum
-    if (!["full", "service"].includes(type)) {
+    if (!["full", "service", "self-hosted"].includes(type)) {
       return res.status(400).json({
         status: "error",
-        message: "Type must be either 'full' or 'service'",
-      });
-    }
-
-    // Check if email already exists
-    const existingUser = await MdaAdminUser.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        status: "error",
-        message: "Email already in use",
+        message: "Type must be one of 'full', 'service' or 'self-hosted'",
       });
     }
 
@@ -68,6 +60,58 @@ const createMdaAdmin = async (req, res) => {
       return res.status(400).json({
         status: "error",
         message: "MDA with this slug already exists",
+      });
+    }
+
+    if (type === "self-hosted") {
+      if (!externalUrl || !isSecureUrl(externalUrl)) {
+        return res.status(400).json({
+          status: "error",
+          message: "A valid, secure (https) externalUrl is required for self-hosted MDAs",
+        });
+      }
+
+      const mdaData = {
+        fullname: mdaFullname,
+        name: proposedSlug,
+        slug: proposedSlug,
+        type,
+        externalUrl,
+        isOffline: false,
+      };
+
+      if (req.body.enabledSections) {
+        mdaData.landingPage = {
+          enabledSections: req.body.enabledSections,
+        };
+      }
+
+      const createdMda = await Mda_Directory.create(mdaData);
+
+      return res.status(201).json({
+        status: "success",
+        message: "Self-hosted MDA created successfully",
+        data: {
+          mda: createdMda,
+        },
+      });
+    }
+
+    // full / service: an admin account is required
+    if (!firstname || !lastname || !email || !role) {
+      return res.status(400).json({
+        status: "error",
+        message:
+          "firstname, lastname, email and role are required for full/service MDAs",
+      });
+    }
+
+    // Check if email already exists
+    const existingUser = await MdaAdminUser.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        status: "error",
+        message: "Email already in use",
       });
     }
 
@@ -122,13 +166,13 @@ const createMdaAdmin = async (req, res) => {
       to: { email, name: `${firstname} ${lastname}` },
       subject: `Lagos State ${mdaFullname} Web Portal Account Created`,
       content: `${firstname} ${lastname}, an account has been created for you to set up the Lagos State ${mdaFullname} portal.
-      
+
 This is your public url for this MDA: https://lagosstate.gov.ng/${proposedSlug}
-      
-Kindly use the following credentials to log in: 
-Your email is ${email} 
-and your password is ${generatedPassword} 
-The URL to login is: https://lagosstate.gov.ng/${proposedSlug}/admin/login  
+
+Kindly use the following credentials to log in:
+Your email is ${email}
+and your password is ${generatedPassword}
+The URL to login is: https://lagosstate.gov.ng/${proposedSlug}/admin/login
 
 
 Note: By default your application is offline and needs to be activated by the LASG Admin Team once all setup has been done`,
@@ -164,7 +208,8 @@ Note: By default your application is offline and needs to be activated by the LA
 const updateMdaAdmin = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstname, lastname, email, fullname, slug, type } = req.body;
+    const { firstname, lastname, email, fullname, slug, type, externalUrl } =
+      req.body;
 
     // Find the MDA directory
     const mdaDirectory = await Mda_Directory.findById(id);
@@ -175,17 +220,13 @@ const updateMdaAdmin = async (req, res) => {
       });
     }
 
-    // Find the admin user
-    const adminUser = await MdaAdminUser.findById(mdaDirectory.adminUser);
-    if (!adminUser) {
-      return res.status(404).json({
-        status: "error",
-        message: "Admin user not found",
-      });
-    }
+    // Self-hosted MDAs have no admin user account to update
+    const adminUser = mdaDirectory.adminUser
+      ? await MdaAdminUser.findById(mdaDirectory.adminUser)
+      : null;
 
     // Check if email is being changed and if it already exists
-    if (email && email !== adminUser.email) {
+    if (email && adminUser && email !== adminUser.email) {
       const existingEmail = await MdaAdminUser.findOne({ email });
       if (existingEmail) {
         return res.status(400).json({
@@ -207,26 +248,40 @@ const updateMdaAdmin = async (req, res) => {
     }
 
     // Validate type enum if provided
-    if (type && !["full", "service"].includes(type)) {
+    if (type && !["full", "service", "self-hosted"].includes(type)) {
       return res.status(400).json({
         status: "error",
-        message: "Type must be either 'full' or 'service'",
+        message: "Type must be one of 'full', 'service' or 'self-hosted'",
       });
     }
 
-    // Update admin user
-    const adminUpdateData = {};
-    if (firstname) adminUpdateData.firstname = firstname;
-    if (lastname) adminUpdateData.lastname = lastname;
-    if (email) adminUpdateData.email = email;
-    if (fullname) adminUpdateData.mdaFullname = fullname;
-    if (slug) adminUpdateData.mda = slug;
+    const effectiveType = type || mdaDirectory.type;
+    if (effectiveType === "self-hosted") {
+      const nextExternalUrl = externalUrl || mdaDirectory.externalUrl;
+      if (!nextExternalUrl || !isSecureUrl(nextExternalUrl)) {
+        return res.status(400).json({
+          status: "error",
+          message: "A valid, secure (https) externalUrl is required for self-hosted MDAs",
+        });
+      }
+    }
 
-    const updatedAdminUser = await MdaAdminUser.findByIdAndUpdate(
-      mdaDirectory.adminUser,
-      adminUpdateData,
-      { new: true, runValidators: true },
-    );
+    // Update admin user, only if one exists on this MDA
+    let updatedAdminUser = null;
+    if (adminUser) {
+      const adminUpdateData = {};
+      if (firstname) adminUpdateData.firstname = firstname;
+      if (lastname) adminUpdateData.lastname = lastname;
+      if (email) adminUpdateData.email = email;
+      if (fullname) adminUpdateData.mdaFullname = fullname;
+      if (slug) adminUpdateData.mda = slug;
+
+      updatedAdminUser = await MdaAdminUser.findByIdAndUpdate(
+        mdaDirectory.adminUser,
+        adminUpdateData,
+        { new: true, runValidators: true },
+      );
+    }
 
     // Update MDA directory
     const mdaUpdateData = {};
@@ -236,6 +291,7 @@ const updateMdaAdmin = async (req, res) => {
       mdaUpdateData.name = slug;
     }
     if (type) mdaUpdateData.type = type;
+    if (externalUrl) mdaUpdateData.externalUrl = externalUrl;
 
     // Handle landingPage configuration
     if (req.body.enabledSections) {
@@ -275,4 +331,5 @@ const updateMdaAdmin = async (req, res) => {
 module.exports = {
   createMdaAdmin,
   updateMdaAdmin,
+  generatePassword,
 };

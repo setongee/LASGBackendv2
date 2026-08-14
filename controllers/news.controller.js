@@ -14,7 +14,10 @@ const addNews = async (req, res) => {
 
     const newsRef = await news.create(newsData);
 
-    if (Object.keys(photo).length) {
+    // `photo` is either an already-uploaded URL string (direct-to-Cloudinary
+    // upload from the admin UI) or a legacy { temp, data } base64 payload
+    // that still needs uploading here.
+    if (photo && typeof photo === "object" && photo.data) {
       await UploaderMiddleware(photo).then(async (response) => {
         newsRef.photo = response.secure_url;
         await newsRef.save();
@@ -127,7 +130,11 @@ const updateNews = async (req, res) => {
 
     const newsRef = await news.findByIdAndUpdate(id, updateData);
 
-    if (req.body.photo && req.body.photo.data !== undefined) {
+    if (
+      req.body.photo &&
+      typeof req.body.photo === "object" &&
+      req.body.photo.data !== undefined
+    ) {
       await UploaderMiddleware(req.body.photo).then(async (response) => {
         newsRef.photo = response.secure_url;
         await newsRef.save();

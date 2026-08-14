@@ -15,16 +15,12 @@ const PublishBucketSchema = mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "content approved", "rejected", "published"],
+      enum: ["pending", "rejected", "published"],
       default: "pending",
     },
 
     reasonForRejection: {
       type: String,
-    },
-
-    contentApprovedAt: {
-      type: Date,
     },
 
     publishedAt: {
@@ -34,7 +30,6 @@ const PublishBucketSchema = mongoose.Schema(
     approvedBy: {
       type: Object,
       default: {
-        contentApprover: null,
         publisher: null,
       },
     },
