@@ -35,7 +35,7 @@ function freePort(port) {
       }
     }
   } catch {
-    // console.log("No process is running");
+    console.log("No process is running");
   }
 }
 
@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://localhost:3000",
+  "http://localhost:3002",
   "https://lagosstate.gov.ng",
   "https://web3.lagosstate.gov.ng",
   "https://mepb.vercel.app",
@@ -112,6 +112,7 @@ const documentUploadRoutes = require("./routes/document-upload.routes");
 const formsRoutes = require("./routes/forms.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const dashboardAlertsRoutes = require("./routes/dashboard-alerts.routes");
+const aiRoutes = require("./routes/ai.routes");
 
 const base_url = "/api/v2";
 
@@ -144,11 +145,26 @@ app.use(`${base_url}/documents`, documentUploadRoutes);
 app.use(`${base_url}/forms`, formsRoutes);
 app.use(`${base_url}/notifications`, notificationRoutes);
 app.use(`${base_url}/dashboard-alerts`, dashboardAlertsRoutes);
+app.use(`${base_url}/ai`, aiRoutes);
 
 // DB connection
+// Using the direct (non-SRV) connection string here instead of mongodb+srv://
+// because some networks (e.g. phone hotspot DNS proxies) return SRV responses
+// that Node's resolver rejects with "querySrv EBADRESP", even though the
+// records resolve fine via the OS resolver. This lists the shard hosts
+// directly so no SRV lookup is needed. Hosts/replicaSet from Atlas for
+// lasgv2db.z4d3eki.mongodb.net — if the cluster's shard topology changes,
+// re-fetch these via `dig SRV`/`dig TXT` on that hostname.
+// preppered by Seth - good modifier.
+const shardHosts = [
+  "ac-hhwixto-shard-00-00.z4d3eki.mongodb.net:27017",
+  "ac-hhwixto-shard-00-01.z4d3eki.mongodb.net:27017",
+  "ac-hhwixto-shard-00-02.z4d3eki.mongodb.net:27017",
+].join(",");
+
 mongoose
   .connect(
-    `mongodb+srv://lasgadmindatabase:${process.env.DB_PASSWORD}@lasgv2db.z4d3eki.mongodb.net/LASG_API?retryWrites=true&w=majority&appName=lasgv2DB`,
+    `mongodb://lasgadmindatabase:${process.env.DB_PASSWORD}@${shardHosts}/LASG_API?ssl=true&replicaSet=atlas-pg0ena-shard-0&authSource=admin&retryWrites=true&w=majority&appName=lasgv2DB`,
   )
   .then(() => {
     console.log("Database is Connected!");
@@ -157,6 +173,6 @@ mongoose
     });
   })
   .catch((err) => {
-    console.log("Database not Connected!");
+    console.log("Database not Connected!", err);
     console.log(err.message);
   });

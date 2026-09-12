@@ -70,6 +70,12 @@ const MdaDirectorySchema = mongoose.Schema(
 
     responsibilities: { type: String },
 
+    aboutSubtitle: {
+      type: String,
+      default:
+        "Comprehensive Insight into the Ministry’s Vision, Administrative Structure, Principal Officers, and Operational Responsibilities",
+    },
+
     resources: { type: Array },
 
     statistics: {
